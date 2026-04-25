@@ -5,7 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "22.20.0"
+  },
   "scripts": {
+    "check:node": "node -e \"const required = '22.20.0'; const current = process.versions.node; if (current !== required) { console.error('Required Node.js ' + required + ', current ' + current); process.exit(1); }\"",
+    "preinstall": "npm run check:node",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

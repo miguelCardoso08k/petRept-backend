@@ -1,344 +1,384 @@
-# Modelagem de Banco de Dados
+Perfeito. Vamos manter a modelagem ideal e padronizar tudo em **inglês semântico**, com nomes mais próximos de um projeto real em NestJS/TypeORM.
 
-Este documento descreve as entidades principais do sistema, seus campos, relacionamentos e fluxos de negócio.
-
-## Visão geral
+# Visão geral das entidades
 
 ```text
 customers
-├── pets
-├── customer_package_subscriptions
-│   └── customer_package_cycles
-│       └── customer_package_service_credits
-│           └── customer_package_credit_usages
-└── service_appointments
+ ├── pets
+ ├── customer_package_subscriptions
+ │    └── customer_package_cycles
+ │         └── customer_package_service_credits
+ │              └── customer_package_credit_usages
+ └── service_appointments
 
 packages
-└── package_services
-    └── services
-        └── service_prices
+ └── package_services
+      └── services
+           └── service_prices
 
 users
-└── service_appointments
+ └── service_appointments
 ```
 
-## Entidades
+---
 
-### 1. `customers`
+# 1. customers
 
-Representa o cliente ou tutor responsável pelos pets.
+Representa o cliente/tutor responsável pelos pets.
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do cliente |
-| `name` | string | Nome do cliente |
-| `phone` | string | Telefone principal |
-| `whatsapp` | string | Número usado para notificações |
-| `email` | string | Email do cliente |
-| `registered_at` | datetime | Data de cadastro |
-| `is_active` | boolean | Indica se o cliente está ativo |
+| Campo           | Tipo sugerido | Explicação                     |
+| --------------- | ------------- | ------------------------------ |
+| `id`            | UUID          | Identificador único do cliente |
+| `name`          | string        | Nome do cliente                |
+| `phone`         | string        | Telefone principal             |
+| `whatsapp`      | string        | Número usado para notificações |
+| `email`         | string        | Email do cliente               |
+| `registered_at` | datetime      | Data de cadastro               |
+| `is_active`     | boolean       | Indica se o cliente está ativo |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `customer` pode ter muitos `pets`.
-- Um `customer` pode ter muitas `customer_package_subscriptions`.
-- Um `customer` pode ter muitos `service_appointments`.
+Um `customer` pode ter muitos `pets`.
 
-### 2. `pets`
+Um `customer` pode ter muitas `customer_package_subscriptions`.
+
+Um `customer` pode ter muitos `service_appointments`.
+
+---
+
+# 2. pets
 
 Representa os animais vinculados a um cliente.
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do pet |
-| `customer_id` | UUID | Cliente dono do pet |
-| `name` | string | Nome do pet |
-| `breed` | string | Raça |
-| `size` | enum | Porte: `SMALL`, `MEDIUM`, `LARGE` |
-| `notes` | text | Observações gerais |
-| `is_active` | boolean | Indica se o pet está ativo |
+| Campo         | Tipo sugerido | Explicação                        |
+| ------------- | ------------- | --------------------------------- |
+| `id`          | UUID          | Identificador único do pet        |
+| `customer_id` | UUID          | Cliente dono do pet               |
+| `name`        | string        | Nome do pet                       |
+| `breed`       | string        | Raça                              |
+| `size`        | enum          | Porte: `SMALL`, `MEDIUM`, `LARGE` |
+| `notes`       | text          | Observações gerais                |
+| `is_active`   | boolean       | Indica se o pet está ativo        |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `pet` pertence a um `customer`.
-- Um `pet` pode ter muitos `service_appointments`.
+Um `pet` pertence a um `customer`.
 
-### 3. `users`
+Um `pet` pode ter muitos `service_appointments`.
+
+---
+
+# 3. users
 
 Representa os funcionários que usam o sistema.
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do usuário |
-| `name` | string | Nome do funcionário |
-| `email` | string | Email usado no login |
-| `password_hash` | string | Senha criptografada |
-| `role` | enum | Perfil: `ADMIN`, `EMPLOYEE` |
-| `is_active` | boolean | Indica se o usuário está ativo |
+| Campo           | Tipo sugerido | Explicação                     |
+| --------------- | ------------- | ------------------------------ |
+| `id`            | UUID          | Identificador único do usuário |
+| `name`          | string        | Nome do funcionário            |
+| `email`         | string        | Email usado no login           |
+| `password_hash` | string        | Senha criptografada            |
+| `role`          | enum          | Perfil: `ADMIN`, `EMPLOYEE`    |
+| `is_active`     | boolean       | Indica se o usuário está ativo |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `user` pode registrar muitos `service_appointments`.
+Um `user` pode registrar muitos `service_appointments`.
 
-### 4. `services`
+---
+
+# 4. services
 
 Representa os serviços oferecidos pelo pet shop.
 
-Exemplos:
+Exemplos: banho, tosa, tosa higiênica.
 
-- Banho.
-- Tosa.
-- Tosa higiênica.
+## Campos
 
-#### Campos
+| Campo         | Tipo sugerido | Explicação                          |
+| ------------- | ------------- | ----------------------------------- |
+| `id`          | UUID          | Identificador único do serviço      |
+| `name`        | string        | Nome do serviço                     |
+| `description` | text          | Descrição do serviço                |
+| `is_active`   | boolean       | Indica se o serviço está disponível |
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do serviço |
-| `name` | string | Nome do serviço |
-| `description` | text | Descrição do serviço |
-| `is_active` | boolean | Indica se o serviço está disponível |
+## Relacionamentos
 
-#### Relacionamentos
+Um `service` pode ter muitos `service_prices`.
 
-- Um `service` pode ter muitos `service_prices`.
-- Um `service` pode estar em muitos `package_services`.
-- Um `service` pode aparecer em muitos `service_appointments`.
+Um `service` pode estar em muitos `package_services`.
 
-### 5. `service_prices`
+Um `service` pode aparecer em muitos `service_appointments`.
+
+---
+
+# 5. service_prices
 
 Representa o preço base de um serviço de acordo com o porte do pet.
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do preço |
-| `service_id` | UUID | Serviço ao qual o preço pertence |
-| `pet_size` | enum | Porte: `SMALL`, `MEDIUM`, `LARGE` |
-| `base_price` | decimal | Valor base do serviço para aquele porte |
-| `is_active` | boolean | Indica se esse preço está ativo |
+| Campo        | Tipo sugerido | Explicação                              |
+| ------------ | ------------- | --------------------------------------- |
+| `id`         | UUID          | Identificador único do preço            |
+| `service_id` | UUID          | Serviço ao qual o preço pertence        |
+| `pet_size`   | enum          | `SMALL`, `MEDIUM`, `LARGE`              |
+| `base_price` | decimal       | Valor base do serviço para aquele porte |
+| `is_active`  | boolean       | Indica se esse preço está ativo         |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `service_price` pertence a um `service`.
+Um `service_price` pertence a um `service`.
 
-#### Exemplo
+Exemplo:
 
-| Service | Pet size | Base price |
+| service | pet_size | base_price |
 | ------- | -------- | ---------: |
-| Bath | SMALL | 50.00 |
-| Bath | MEDIUM | 70.00 |
-| Bath | LARGE | 90.00 |
+| Bath    | SMALL    |      50.00 |
+| Bath    | MEDIUM   |      70.00 |
+| Bath    | LARGE    |      90.00 |
 
-### 6. `packages`
+---
+
+# 6. packages
 
 Representa o modelo de pacote vendido pelo pet shop.
 
-Exemplo: `Monthly Basic Package`.
+Exemplo: “Monthly Basic Package”.
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do pacote |
-| `name` | string | Nome do pacote |
-| `description` | text | Descrição do pacote |
-| `total_price` | decimal | Valor total do pacote |
-| `duration_days` | integer | Duração do pacote em dias |
-| `is_active` | boolean | Indica se o pacote está disponível |
+| Campo           | Tipo sugerido | Explicação                         |
+| --------------- | ------------- | ---------------------------------- |
+| `id`            | UUID          | Identificador único do pacote      |
+| `name`          | string        | Nome do pacote                     |
+| `description`   | text          | Descrição do pacote                |
+| `total_price`   | decimal       | Valor total do pacote              |
+| `duration_days` | integer       | Duração do pacote em dias          |
+| `is_active`     | boolean       | Indica se o pacote está disponível |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `package` pode ter muitos `package_services`.
-- Um `package` pode ter muitas `customer_package_subscriptions`.
+Um `package` pode ter muitos `package_services`.
 
-### 7. `package_services`
+Um `package` pode ter muitas `customer_package_subscriptions`.
+
+---
+
+# 7. package_services
 
 Representa quais serviços fazem parte de um pacote.
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único |
-| `package_id` | UUID | Pacote relacionado |
-| `service_id` | UUID | Serviço incluído |
-| `included_quantity` | integer | Quantidade incluída no pacote |
+| Campo               | Tipo sugerido | Explicação                    |
+| ------------------- | ------------- | ----------------------------- |
+| `id`                | UUID          | Identificador único           |
+| `package_id`        | UUID          | Pacote relacionado            |
+| `service_id`        | UUID          | Serviço incluído              |
+| `included_quantity` | integer       | Quantidade incluída no pacote |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `package_service` pertence a um `package`.
-- Um `package_service` referencia um `service`.
+Um `package_service` pertence a um `package`.
 
-#### Exemplo
+Um `package_service` referencia um `service`.
 
-| Package | Service | Included quantity |
-| ------- | ------- | ----------------: |
-| Monthly Basic | Bath | 4 |
-| Monthly Basic | Hygienic Grooming | 1 |
+Exemplo:
 
-### 8. `customer_package_subscriptions`
+| package       | service           | included_quantity |
+| ------------- | ----------------- | ----------------: |
+| Monthly Basic | Bath              |                 4 |
+| Monthly Basic | Hygienic Grooming |                 1 |
 
-Representa o contrato ou assinatura do cliente com um pacote.
+---
 
-Essa tabela não representa um mês específico. Ela representa o vínculo contínuo do cliente com aquele pacote.
+# 8. customer_package_subscriptions
 
-#### Campos
+Representa o contrato/assinatura do cliente com um pacote.
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único da assinatura |
-| `customer_id` | UUID | Cliente que contratou |
-| `package_id` | UUID | Pacote contratado |
-| `contracted_price` | decimal | Valor contratado no momento da assinatura |
-| `auto_renew` | boolean | Indica se renova automaticamente |
-| `subscription_started_at` | datetime | Data de início da assinatura |
-| `last_renewed_at` | datetime | Última renovação feita |
-| `renewal_day` | integer | Dia do mês previsto para renovação |
-| `status` | enum | `ACTIVE`, `PAUSED`, `CANCELED`, `ENDED` |
+Essa tabela não representa um mês específico.
+Ela representa o vínculo contínuo do cliente com aquele pacote.
 
-#### Relacionamentos
+## Campos
 
-- Uma `customer_package_subscription` pertence a um `customer`.
-- Uma `customer_package_subscription` pertence a um `package`.
-- Uma `customer_package_subscription` possui muitos `customer_package_cycles`.
+| Campo                     | Tipo sugerido | Explicação                                |
+| ------------------------- | ------------- | ----------------------------------------- |
+| `id`                      | UUID          | Identificador único da assinatura         |
+| `customer_id`             | UUID          | Cliente que contratou                     |
+| `package_id`              | UUID          | Pacote contratado                         |
+| `contracted_price`        | decimal       | Valor contratado no momento da assinatura |
+| `auto_renew`              | boolean       | Indica se renova automaticamente          |
+| `subscription_started_at` | datetime      | Data de início da assinatura              |
+| `last_renewed_at`         | datetime      | Última renovação feita                    |
+| `renewal_day`             | integer       | Dia do mês previsto para renovação        |
+| `status`                  | enum          | `ACTIVE`, `PAUSED`, `CANCELED`, `ENDED`   |
 
-### 9. `customer_package_cycles`
+## Relacionamentos
+
+Uma `customer_package_subscription` pertence a um `customer`.
+
+Uma `customer_package_subscription` pertence a um `package`.
+
+Uma `customer_package_subscription` possui muitos `customer_package_cycles`.
+
+---
+
+# 9. customer_package_cycles
 
 Representa cada ciclo da assinatura.
 
-Exemplos:
+Exemplo:
 
-- Ciclo de abril.
-- Ciclo de maio.
-- Ciclo de junho.
+- ciclo de abril
+- ciclo de maio
+- ciclo de junho
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do ciclo |
-| `subscription_id` | UUID | Assinatura à qual o ciclo pertence |
-| `cycle_number` | integer | Número sequencial do ciclo |
-| `starts_at` | datetime | Início do ciclo |
-| `ends_at` | datetime | Fim do ciclo |
-| `renewed_at` | datetime | Data em que o ciclo foi criado ou renovado |
-| `cycle_price` | decimal | Valor cobrado naquele ciclo |
-| `status` | enum | `ACTIVE`, `EXPIRED`, `CANCELED`, `FINISHED` |
+| Campo             | Tipo sugerido | Explicação                                  |
+| ----------------- | ------------- | ------------------------------------------- |
+| `id`              | UUID          | Identificador único do ciclo                |
+| `subscription_id` | UUID          | Assinatura à qual o ciclo pertence          |
+| `cycle_number`    | integer       | Número sequencial do ciclo                  |
+| `starts_at`       | datetime      | Início do ciclo                             |
+| `ends_at`         | datetime      | Fim do ciclo                                |
+| `renewed_at`      | datetime      | Data em que o ciclo foi criado/renovado     |
+| `cycle_price`     | decimal       | Valor cobrado naquele ciclo                 |
+| `status`          | enum          | `ACTIVE`, `EXPIRED`, `CANCELED`, `FINISHED` |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `customer_package_cycle` pertence a uma `customer_package_subscription`.
-- Um `customer_package_cycle` possui muitos `customer_package_service_credits`.
-- Um `customer_package_cycle` pode estar ligado a muitos `service_appointments`.
+Um `customer_package_cycle` pertence a uma `customer_package_subscription`.
 
-### 10. `customer_package_service_credits`
+Um `customer_package_cycle` possui muitos `customer_package_service_credits`.
+
+Um `customer_package_cycle` pode estar ligado a muitos `service_appointments`.
+
+---
+
+# 10. customer_package_service_credits
 
 Representa o saldo de cada serviço dentro de um ciclo.
 
 Essa é a tabela de crédito.
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do crédito |
-| `cycle_id` | UUID | Ciclo ao qual o crédito pertence |
-| `service_id` | UUID | Serviço disponível como crédito |
-| `total_quantity` | integer | Quantidade total liberada no ciclo |
-| `used_quantity` | integer | Quantidade já usada |
-| `available_quantity` | integer | Quantidade ainda disponível |
+| Campo                | Tipo sugerido | Explicação                         |
+| -------------------- | ------------- | ---------------------------------- |
+| `id`                 | UUID          | Identificador único do crédito     |
+| `cycle_id`           | UUID          | Ciclo ao qual o crédito pertence   |
+| `service_id`         | UUID          | Serviço disponível como crédito    |
+| `total_quantity`     | integer       | Quantidade total liberada no ciclo |
+| `used_quantity`      | integer       | Quantidade já usada                |
+| `available_quantity` | integer       | Quantidade ainda disponível        |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `customer_package_service_credit` pertence a um `customer_package_cycle`.
-- Um `customer_package_service_credit` referencia um `service`.
-- Um `customer_package_service_credit` pode ter muitos `customer_package_credit_usages`.
+Um `customer_package_service_credit` pertence a um `customer_package_cycle`.
 
-#### Exemplo
+Um `customer_package_service_credit` referencia um `service`.
 
-| Service | Total quantity | Used quantity | Available quantity |
-| ------- | -------------: | ------------: | -----------------: |
-| Bath | 4 | 1 | 3 |
-| Hygienic Grooming | 1 | 0 | 1 |
+Um `customer_package_service_credit` pode ter muitos `customer_package_credit_usages`.
 
-### 11. `service_appointments`
+Exemplo:
+
+| service           | total_quantity | used_quantity | available_quantity |
+| ----------------- | -------------: | ------------: | -----------------: |
+| Bath              |              4 |             1 |                  3 |
+| Hygienic Grooming |              1 |             0 |                  1 |
+
+---
+
+# 11. service_appointments
 
 Representa o histórico de serviços realizados.
 
-Um atendimento pode ser:
+Pode ser:
 
-- Avulso.
-- Usando crédito de pacote.
-- Via assinatura.
+- atendimento avulso
+- atendimento usando crédito de pacote
+- atendimento via assinatura
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do atendimento |
-| `customer_id` | UUID | Cliente atendido |
-| `pet_id` | UUID | Pet atendido |
-| `service_id` | UUID | Serviço realizado |
-| `user_id` | UUID | Funcionário que registrou |
-| `cycle_id` | UUID nullable | Ciclo usado, caso tenha vindo de pacote |
-| `billing_origin` | enum | `ONE_TIME`, `PACKAGE_CREDIT`, `SUBSCRIPTION` |
-| `base_price` | decimal | Valor base no momento do atendimento |
-| `price_adjustment_type` | enum | `NONE`, `DISCOUNT`, `SURCHARGE` |
-| `price_adjustment_amount` | decimal | Valor do desconto ou acréscimo |
-| `final_price` | decimal | Valor final cobrado |
-| `price_adjustment_reason` | text | Motivo do desconto ou acréscimo |
-| `status` | enum | `COMPLETED`, `CANCELED` |
-| `performed_at` | datetime | Data do atendimento |
-| `notes` | text | Observações do atendimento |
+| Campo                     | Tipo sugerido | Explicação                                   |
+| ------------------------- | ------------- | -------------------------------------------- |
+| `id`                      | UUID          | Identificador único do atendimento           |
+| `customer_id`             | UUID          | Cliente atendido                             |
+| `pet_id`                  | UUID          | Pet atendido                                 |
+| `service_id`              | UUID          | Serviço realizado                            |
+| `user_id`                 | UUID          | Funcionário que registrou                    |
+| `cycle_id`                | UUID nullable | Ciclo usado, caso tenha vindo de pacote      |
+| `billing_origin`          | enum          | `ONE_TIME`, `PACKAGE_CREDIT`, `SUBSCRIPTION` |
+| `base_price`              | decimal       | Valor base no momento do atendimento         |
+| `price_adjustment_type`   | enum          | `NONE`, `DISCOUNT`, `SURCHARGE`              |
+| `price_adjustment_amount` | decimal       | Valor do desconto ou acréscimo               |
+| `final_price`             | decimal       | Valor final cobrado                          |
+| `price_adjustment_reason` | text          | Motivo do desconto/acréscimo                 |
+| `status`                  | enum          | `COMPLETED`, `CANCELED`                      |
+| `performed_at`            | datetime      | Data do atendimento                          |
+| `notes`                   | text          | Observações do atendimento                   |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `service_appointment` pertence a um `customer`.
-- Um `service_appointment` pertence a um `pet`.
-- Um `service_appointment` referencia um `service`.
-- Um `service_appointment` é registrado por um `user`.
-- Um `service_appointment` pode estar ligado a um `customer_package_cycle`.
-- Um `service_appointment` pode gerar um `customer_package_credit_usage`.
+Um `service_appointment` pertence a um `customer`.
 
-### 12. `customer_package_credit_usages`
+Um `service_appointment` pertence a um `pet`.
+
+Um `service_appointment` referencia um `service`.
+
+Um `service_appointment` é registrado por um `user`.
+
+Um `service_appointment` pode estar ligado a um `customer_package_cycle`.
+
+Um `service_appointment` pode gerar um `customer_package_credit_usage`.
+
+---
+
+# 12. customer_package_credit_usages
 
 Representa a baixa do crédito de pacote.
 
 Essa tabela liga o atendimento ao crédito consumido.
 
-#### Campos
+## Campos
 
-| Campo | Tipo sugerido | Descrição |
-| ----- | ------------- | --------- |
-| `id` | UUID | Identificador único do uso de crédito |
-| `service_credit_id` | UUID | Crédito consumido |
-| `appointment_id` | UUID | Atendimento que consumiu o crédito |
-| `used_quantity` | integer | Quantidade consumida |
-| `used_at` | datetime | Data do consumo |
+| Campo               | Tipo sugerido | Explicação                            |
+| ------------------- | ------------- | ------------------------------------- |
+| `id`                | UUID          | Identificador único do uso de crédito |
+| `service_credit_id` | UUID          | Crédito consumido                     |
+| `appointment_id`    | UUID          | Atendimento que consumiu o crédito    |
+| `used_quantity`     | integer       | Quantidade consumida                  |
+| `used_at`           | datetime      | Data do consumo                       |
 
-#### Relacionamentos
+## Relacionamentos
 
-- Um `customer_package_credit_usage` pertence a um `customer_package_service_credit`.
-- Um `customer_package_credit_usage` pertence a um `service_appointment`.
+Um `customer_package_credit_usage` pertence a um `customer_package_service_credit`.
 
-## Fluxos principais
+Um `customer_package_credit_usage` pertence a um `service_appointment`.
 
-### Contratação de pacote
+---
+
+# Fluxos principais
+
+## Contratação de pacote
 
 1. Cria `customer_package_subscriptions`.
 2. Cria o primeiro `customer_package_cycles`.
 3. Copia os serviços de `package_services`.
 4. Cria os créditos em `customer_package_service_credits`.
 
-### Atendimento avulso
+---
+
+## Atendimento avulso
 
 1. Busca o pet.
 2. Verifica o porte do pet.
@@ -353,7 +393,9 @@ billing_origin = ONE_TIME
 final_price > 0
 ```
 
-### Atendimento usando pacote
+---
+
+## Atendimento usando pacote
 
 1. Busca assinatura ativa do cliente.
 2. Busca ciclo ativo.
@@ -372,83 +414,86 @@ price_adjustment_amount = 0
 final_price = 0
 ```
 
-### Renovação automática
+---
+
+## Renovação automática
 
 1. Encerra ou expira o ciclo atual.
 2. Cria novo `customer_package_cycles`.
 3. Recria os créditos em `customer_package_service_credits`.
 4. Atualiza `last_renewed_at` em `customer_package_subscriptions`.
 
-## Enums sugeridos
+---
 
-### `PetSize`
+# Enums sugeridos
 
-```ts
-SMALL
-MEDIUM
-LARGE
-```
-
-### `UserRole`
+## PetSize
 
 ```ts
-ADMIN
-EMPLOYEE
+SMALL;
+MEDIUM;
+LARGE;
 ```
 
-### `SubscriptionStatus`
+## UserRole
 
 ```ts
-ACTIVE
-PAUSED
-CANCELED
-ENDED
+ADMIN;
+EMPLOYEE;
 ```
 
-### `CycleStatus`
+## SubscriptionStatus
 
 ```ts
-ACTIVE
-EXPIRED
-CANCELED
-FINISHED
+ACTIVE;
+PAUSED;
+CANCELED;
+ENDED;
 ```
 
-### `BillingOrigin`
+## CycleStatus
 
 ```ts
-ONE_TIME
-PACKAGE_CREDIT
-SUBSCRIPTION
+ACTIVE;
+EXPIRED;
+CANCELED;
+FINISHED;
 ```
 
-### `PriceAdjustmentType`
+## BillingOrigin
 
 ```ts
-NONE
-DISCOUNT
-SURCHARGE
+ONE_TIME;
+PACKAGE_CREDIT;
+SUBSCRIPTION;
 ```
 
-### `AppointmentStatus`
+## PriceAdjustmentType
 
 ```ts
-COMPLETED
-CANCELED
+NONE;
+DISCOUNT;
+SURCHARGE;
 ```
 
-## Ponto central da modelagem
+## AppointmentStatus
+
+```ts
+COMPLETED;
+CANCELED;
+```
+
+---
+
+# Ponto central da modelagem
 
 A modelagem separa:
 
-| Camada | Responsabilidade |
-| ------ | ---------------- |
-| `packages` | Modelo comercial do pacote |
-| `customer_package_subscriptions` | Contrato do cliente |
-| `customer_package_cycles` | Cada mês ou ciclo da assinatura |
-| `customer_package_service_credits` | Saldo disponível |
-| `service_appointments` | Histórico do serviço realizado |
-| `customer_package_credit_usages` | Baixa do crédito usado |
+- `packages`: modelo comercial do pacote
+- `customer_package_subscriptions`: contrato do cliente
+- `customer_package_cycles`: cada mês/ciclo da assinatura
+- `customer_package_service_credits`: saldo disponível
+- `service_appointments`: histórico do serviço realizado
+- `customer_package_credit_usages`: baixa do crédito usado
 
 Essa separação evita perda de histórico e deixa o sistema pronto para renovação automática, auditoria e relatórios.
-
