@@ -76,14 +76,14 @@ Representa os funcionários que usam o sistema.
 
 ## Campos
 
-| Campo           | Tipo sugerido | Explicação                     |
-| --------------- | ------------- | ------------------------------ |
-| `id`            | UUID          | Identificador único do usuário |
-| `name`          | string        | Nome do funcionário            |
-| `email`         | string        | Email usado no login           |
-| `password_hash` | string        | Senha criptografada            |
-| `role`          | enum          | Perfil: `ADMIN`, `EMPLOYEE`    |
-| `is_active`     | boolean       | Indica se o usuário está ativo |
+| Campo           | Tipo sugerido | Explicação                          |
+| --------------- | ------------- | ----------------------------------- |
+| `id`            | UUID          | Identificador único do usuário      |
+| `name`          | string        | Nome do funcionário                 |
+| `email`         | string        | Email usado no login                |
+| `password_hash` | string        | Senha criptografada                 |
+| `role`          | enum          | Perfil: `SUPER`,`ADMIN`, `EMPLOYEE` |
+| `is_active`     | boolean       | Indica se o usuário está ativo      |
 
 ## Relacionamentos
 
