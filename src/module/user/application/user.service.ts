@@ -11,6 +11,7 @@ import { UserEntity } from '../domain/entities/user.entity';
 import { UserRoleEnum } from '../domain/enums/role-user.enum';
 import { UpdateRoleUserDto } from './dto/update-role-user.dto';
 import { UpdateNameUserDto } from './dto/update-name-user.dto';
+import { UpdateEmailUserDto } from './dto/update-email-user.dto';
 
 @Injectable()
 export class UserService {
@@ -69,6 +70,14 @@ export class UserService {
     await this.findById(id);
 
     return await this.userRepository.updateName(id, dto.name);
+  }
+
+  async updateEmail(id: string, dto: UpdateEmailUserDto) {
+    const existingUser = await this.userRepository.findByEmail(dto.email);
+
+    if (existingUser) throw new ConflictException('Email already in use');
+
+    return await this.userRepository.updateEmail(id, dto.email);
   }
 
   async activete(id: string) {

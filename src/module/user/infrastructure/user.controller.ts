@@ -13,6 +13,7 @@ import { CreateUserDto } from '../application/dto/create-user.dto';
 import { UpdateNameUserDto } from '../application/dto/update-name-user.dto';
 import { UpdateRoleUserDto } from '../application/dto/update-role-user.dto';
 import { UserMapper } from './mappers/user.mapper';
+import { UpdateEmailUserDto } from '../application/dto/update-email-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -56,6 +57,13 @@ export class UserController {
       message: 'Users found successfully',
       data: users.map((user) => UserMapper.toHttp(user)),
     };
+  }
+
+  @Patch(':id/email')
+  async updateEmail(@Param('id') id: string, @Body() dto: UpdateEmailUserDto) {
+    await this.userService.updateEmail(id, dto);
+
+    return { message: 'User email updated successfully' };
   }
 
   @Patch(':id/role')
