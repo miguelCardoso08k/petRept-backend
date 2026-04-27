@@ -1,5 +1,3 @@
-Perfeito. Vamos manter a modelagem ideal e padronizar tudo em **inglês semântico**, com nomes mais próximos de um projeto real em NestJS/TypeORM.
-
 # Visão geral das entidades
 
 ```text
