@@ -31,8 +31,6 @@ Representa o cliente/tutor responsável pelos pets.
 | `id`            | UUID          | Identificador único do cliente |
 | `name`          | string        | Nome do cliente                |
 | `phone`         | string        | Telefone principal             |
-| `whatsapp`      | string        | Número usado para notificações |
-| `email`         | string        | Email do cliente               |
 | `registered_at` | datetime      | Data de cadastro               |
 | `is_active`     | boolean       | Indica se o cliente está ativo |
 
