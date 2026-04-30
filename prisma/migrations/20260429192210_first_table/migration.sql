@@ -3,8 +3,9 @@ CREATE TABLE "customers" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
+    "address" TEXT NOT NULL,
     "registered_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "is_active" BOOLEAN NOT NULL DEFAULT true
+    "is_active" BOOLEAN NOT NULL
 );
 
 -- CreateIndex
