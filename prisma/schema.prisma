@@ -4,9 +4,9 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
-  moduleFormat    = "cjs"
+  provider     = "prisma-client"
+  output       = "../src/core/database/prisma/generated"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -14,14 +14,14 @@ datasource db {
 }
 
 model Customer {
-  id            String @id @default(uuid())
+  id            String   @id @default(uuid())
   name          String
-  phone         String @unique
+  phone         String   @unique
   address       String
   registered_at DateTime @default(now())
-  is_active     Boolean @default(true) 
+  is_active     Boolean  @default(true)
 
-  pets Pet[] // um cliente recebe varios pets
+  pets                Pet[] // um cliente recebe varios pets
   customerPackageSubs CustomerPackageSubscription[]
   serviceAppointments ServiceAppointment[]
 
@@ -36,13 +36,13 @@ enum PetSize {
 }
 
 model Pet {
-  id            String @id @default(uuid())
+  id            String   @id @default(uuid())
   customer_id   String
   name          String
   breed         String
   size          PetSize
   notes         String
-  is_active     Boolean @default(true)
+  is_active     Boolean  @default(true)
   customer      Customer @relation(fields: [customer_id], references: [id]) // referenciando o cliente
   registered_at DateTime @default(now())
 
@@ -58,12 +58,12 @@ enum UserRole {
 }
 
 model User {
-  id            String @id @default(uuid())
-  name          String 
-  email         String @unique
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
   password_hash String
   role          UserRole
-  is_active     Boolean @default(true)
+  is_active     Boolean  @default(true)
 
   serviceAppointments ServiceAppointment[]
 
@@ -71,37 +71,37 @@ model User {
 }
 
 model Service {
-  id           String @id @default(uuid())
-  name         String
-  description  String
-  is_active    Boolean @default(true)
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  is_active   Boolean @default(true)
 
-  servicePrices       ServicePrice[]
-  packageServices     PackageService[]
-  serviceAppointments ServiceAppointment[]
+  servicePrices                 ServicePrice[]
+  packageServices               PackageService[]
+  serviceAppointments           ServiceAppointment[]
   customerPackageServiceCredits CustomerPackageServiceCredit[]
 
   @@map("services")
 }
 
 model ServicePrice {
-  id          String @id @default(uuid())
-  service_id  String
-  pet_size    PetSize // chamando do enum sizePet acima
-  base_price  Int
-  is_active   Boolean @default(true)
-  service     Service @relation(fields: [service_id], references: [id])
+  id         String  @id @default(uuid())
+  service_id String
+  pet_size   PetSize // chamando do enum sizePet acima
+  base_price Int
+  is_active  Boolean @default(true)
+  service    Service @relation(fields: [service_id], references: [id])
 
   @@map("service_prices")
 }
 
 model Package {
-  id              String @id @default(uuid())
-  name            String 
-  description     String
-  total_price     Int
-  duration_days   Int
-  is_active       Boolean @default(true)
+  id            String  @id @default(uuid())
+  name          String
+  description   String
+  total_price   Int
+  duration_days Int
+  is_active     Boolean @default(true)
 
   packageServices              PackageService[]
   customerPackageSubscriptions CustomerPackageSubscription[]
@@ -110,7 +110,7 @@ model Package {
 }
 
 model PackageService {
-  id                String @id @default(uuid())
+  id                String  @id @default(uuid())
   package_id        String
   service_id        String
   included_quantity Int
@@ -128,57 +128,57 @@ enum SubscriptionStatus {
 }
 
 model CustomerPackageSubscription {
-  id                      String @id @default(uuid())
+  id                      String             @id @default(uuid())
   customer_id             String
   package_id              String
   contracted_price        Int
-  auto_renew              Boolean @default(true)
-  subscription_started_at DateTime @default(now())
+  auto_renew              Boolean            @default(true)
+  subscription_started_at DateTime           @default(now())
   last_renewed_at         DateTime
-  renewal_day             Int 
+  renewal_day             Int
   status                  SubscriptionStatus // usando o enum statusPackageSubscription acima
 
-  customer                Customer @relation(fields: [customer_id], references: [id])
-  package                 Package @relation(fields: [package_id], references: [id])
+  customer Customer @relation(fields: [customer_id], references: [id])
+  package  Package  @relation(fields: [package_id], references: [id])
 
-  customerPackageCycles   CustomerPackageCycle[]
+  customerPackageCycles CustomerPackageCycle[]
 
   @@map("customer_package_subscriptions")
 }
 
 enum CycleStatus {
-  ACTIVE 
+  ACTIVE
   EXPIRED
   CANCELED
   FINISHED
 }
 
 model CustomerPackageCycle {
-  id              String @id @default(uuid())
+  id              String                      @id @default(uuid())
   subscription_id String
   cycle_number    Int
   starts_at       DateTime
   ends_at         DateTime
-  renewed_at      DateTime @default(now())
+  renewed_at      DateTime                    @default(now())
   cycle_price     Int
   status          CycleStatus
   subscription    CustomerPackageSubscription @relation(fields: [subscription_id], references: [id])
 
   customerPackageServiceCredits CustomerPackageServiceCredit[]
-  appointments           ServiceAppointment[]
+  appointments                  ServiceAppointment[]
 
   @@map("customer_package_cycles")
 }
 
 model CustomerPackageServiceCredit {
-  id                 String @id @default(uuid())
+  id                 String               @id @default(uuid())
   cycle_id           String
   service_id         String
   total_quantity     Int
   used_quantity      Int
   available_quantity Int
   cycle              CustomerPackageCycle @relation(fields: [cycle_id], references: [id])
-  service            Service @relation(fields: [service_id], references: [id])
+  service            Service              @relation(fields: [service_id], references: [id])
 
   customerPackageCreditUsages CustomerPackageCreditUsage[]
 
@@ -203,46 +203,45 @@ enum AppointmentStatus {
 }
 
 model ServiceAppointment {
-  id                        String @id @default(uuid())
-  customer_id               String
-  pet_id                    String
-  service_id                String
-  user_id                   String
-  cycle_id                  String?
-  billing_origin            BillingOrigin
-  base_price                Int
-  price_adjustment_type     PriceAdjustmentType
-  price_adjustment_amount   Int
-  final_price               Int
-  price_adjustment_reason   String
-  status                    AppointmentStatus
-  performed_at              DateTime @default(now())
-  notes                     String
+  id                      String              @id @default(uuid())
+  customer_id             String
+  pet_id                  String
+  service_id              String
+  user_id                 String
+  cycle_id                String?
+  billing_origin          BillingOrigin
+  base_price              Int
+  price_adjustment_type   PriceAdjustmentType
+  price_adjustment_amount Int
+  final_price             Int
+  price_adjustment_reason String
+  status                  AppointmentStatus
+  performed_at            DateTime            @default(now())
+  notes                   String
 
   // referencia opcional
   customerPackageCycle CustomerPackageCycle? @relation(fields: [cycle_id], references: [id])
 
   // relações obrigatorias
-  customer             Customer @relation(fields: [customer_id], references: [id])
-  pet                  Pet @relation(fields: [pet_id], references: [id])
-  service              Service @relation(fields: [service_id], references: [id])
-  user                 User @relation(fields: [user_id], references: [id])
+  customer Customer @relation(fields: [customer_id], references: [id])
+  pet      Pet      @relation(fields: [pet_id], references: [id])
+  service  Service  @relation(fields: [service_id], references: [id])
+  user     User     @relation(fields: [user_id], references: [id])
 
   creditUsage CustomerPackageCreditUsage?
 
   @@map("service_appointments")
-
 }
 
 model CustomerPackageCreditUsage {
-  id                String @id @default(uuid())
+  id                String   @id @default(uuid())
   service_credit_id String
-  appointment_id    String @unique
+  appointment_id    String   @unique
   used_quantity     Int
   used_at           DateTime @default(now())
 
-  serviceCredit          CustomerPackageServiceCredit @relation(fields: [service_credit_id], references: [id])
-  serviceAppointment     ServiceAppointment @relation(fields: [appointment_id], references: [id])
+  serviceCredit      CustomerPackageServiceCredit @relation(fields: [service_credit_id], references: [id])
+  serviceAppointment ServiceAppointment           @relation(fields: [appointment_id], references: [id])
 
   @@map("customer_package_credit_usages")
 }
