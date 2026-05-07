@@ -9,7 +9,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { PasswordHasherRepository } from '../domain/repositories/password-hasher.repository';
-import { UserRepository } from 'src/module/user/domain/repositories/user.repository';
+import { UserRepository } from '../../user/domain/repositories/user.repository';
 import { TokenRepository } from '../domain/repositories/token.repository';
 import { LoginDto } from './dto/login.dto';
 import { AuthenticatedUserEntity } from '../domain/entities/authenticated-user.entity';

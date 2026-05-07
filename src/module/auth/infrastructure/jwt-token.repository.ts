@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserRoleEnum } from 'src/module/user/domain/enums/role-user.enum';
+import { UserRoleEnum } from '../../user/domain/enums/role-user.enum';
 import { TokenRepository } from '../domain/repositories/token.repository';
 import { JwtService } from '@nestjs/jwt';
 import { AuthenticatedUserEntity } from '../domain/entities/authenticated-user.entity';

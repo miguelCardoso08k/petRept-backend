@@ -1,5 +1,5 @@
 import { FastifyRequest } from 'fastify';
-import { AuthenticatedUserEntity } from 'src/module/auth/domain/entities/authenticated-user.entity';
+import { AuthenticatedUserEntity } from '../../../../module/auth/domain/entities/authenticated-user.entity';
 import { RequestContext } from './request-context.interface';
 
 export interface AuthenticatedRequest extends FastifyRequest {

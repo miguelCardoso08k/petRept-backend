@@ -1,4 +1,4 @@
-import { UserRoleEnum } from 'src/module/user/domain/enums/role-user.enum';
+import { UserRoleEnum } from '../../../user/domain/enums/role-user.enum';
 
 type AuthenticatedUserProps = {
   id: string;
