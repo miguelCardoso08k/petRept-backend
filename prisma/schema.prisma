@@ -43,9 +43,9 @@ model Pet {
   size          PetSize
   notes         String
   is_active     Boolean  @default(true)
-  customer      Customer @relation(fields: [customer_id], references: [id]) // referenciando o cliente
   registered_at DateTime @default(now())
 
+  customer          Customer             @relation(fields: [customer_id], references: [id])
   serviceAppoiments ServiceAppointment[]
 
   @@map("pets")
@@ -61,13 +61,30 @@ model User {
   id            String   @id @default(uuid())
   name          String
   email         String   @unique
-  password_hash String
+  password_hash String?
   role          UserRole
   is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt()
 
   serviceAppointments ServiceAppointment[]
+  userSessions        UserSessions[]
 
   @@map("users")
+}
+
+model UserSessions {
+  id                 String   @id @default(uuid())
+  user_id            String
+  refresh_token_hash String
+  expires_at         DateTime
+  revoked_at         DateTime
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt()
+  ip_address         String?
+  user_agent         String?
+
+  user User @relation(fields: [user_id], references: [id])
 }
 
 model Service {
