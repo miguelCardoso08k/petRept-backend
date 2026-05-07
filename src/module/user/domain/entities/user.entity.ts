@@ -4,7 +4,7 @@ type UserProps = {
   id?: string;
   name: string;
   email: string;
-  passwordHash?: string;
+  passwordHash?: string | null;
   role: UserRoleEnum;
   isActive: boolean;
   createdAt?: Date;
