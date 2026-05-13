@@ -14,12 +14,17 @@ import { UpdateNameUserDto } from '../application/dto/update-name-user.dto';
 import { UpdateRoleUserDto } from '../application/dto/update-role-user.dto';
 import { UserMapper } from './mappers/user.mapper';
 import { UpdateEmailUserDto } from '../application/dto/update-email-user.dto';
+import { UserRoleEnum } from '../domain/enums/role-user.enum';
+import { Roles } from '../../auth/infrastructure/decorators/role.decorator';
+import { CurrentUser } from '../../../core/shared/http/decorators/current-user.decorator';
+import { AuthenticatedUserEntity } from '../../auth/domain/entities/authenticated-user.entity';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @Roles(UserRoleEnum.SUPER, UserRoleEnum.ADMIN)
   async create(@Body() dto: CreateUserDto) {
     const user = await this.userService.create(dto);
 
@@ -29,7 +34,15 @@ export class UserController {
     };
   }
 
+  @Get('me')
+  async findMe(@CurrentUser() user: AuthenticatedUserEntity) {
+    const me = await this.userService.findById(user.id);
+
+    return { message: 'Found succesfully', data: UserMapper.toHttp(me) };
+  }
+
   @Get()
+  @Roles(UserRoleEnum.SUPER, UserRoleEnum.ADMIN)
   async findAll() {
     const users = await this.userService.findAll();
 
@@ -40,6 +53,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Roles(UserRoleEnum.SUPER, UserRoleEnum.ADMIN)
   async findOne(@Param('id') id: string) {
     const user = await this.userService.findById(id);
 
@@ -50,6 +64,7 @@ export class UserController {
   }
 
   @Get('search')
+  @Roles(UserRoleEnum.SUPER, UserRoleEnum.ADMIN)
   async search(@Query('name') name: string) {
     const users = await this.userService.findByName(name);
 
@@ -67,6 +82,7 @@ export class UserController {
   }
 
   @Patch(':id/role')
+  @Roles(UserRoleEnum.SUPER, UserRoleEnum.ADMIN)
   async updateRole(@Param('id') id: string, @Body() dto: UpdateRoleUserDto) {
     const user = await this.userService.updateRole(id, dto);
 
@@ -87,6 +103,7 @@ export class UserController {
   }
 
   @Patch(':id/activate')
+  @Roles(UserRoleEnum.SUPER, UserRoleEnum.ADMIN)
   async activate(@Param('id') id: string) {
     const user = await this.userService.activete(id);
 
@@ -97,6 +114,7 @@ export class UserController {
   }
 
   @Patch(':id/deactivate')
+  @Roles(UserRoleEnum.SUPER, UserRoleEnum.ADMIN)
   async deactivate(@Param('id') id: string) {
     const user = await this.userService.deactivate(id);
 
@@ -107,6 +125,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Roles(UserRoleEnum.SUPER, UserRoleEnum.ADMIN)
   async remove(@Param('id') id: string) {
     await this.userService.remove(id);
 

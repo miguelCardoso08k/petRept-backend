@@ -30,6 +30,7 @@ export class AuthController {
     return { message: 'succes' };
   }
 
+  @Public()
   @Post('login')
   async login(@Body() dto: LoginDto) {
     const result = await this.authService.login(dto);
@@ -45,9 +46,7 @@ export class AuthController {
     @CurrentUser() user: AuthenticatedUserEntity,
     @Req() req: AuthenticatedRequest,
   ) {
-    const token = req.token;
-
-    this.authService.logout(user.id, token);
+    this.authService.logout(user.id, req.token);
 
     return { message: 'Logout successfuly' };
   }

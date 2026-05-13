@@ -24,5 +24,6 @@ import { JwtTokenRepository } from './infrastructure/jwt-token.repository';
     },
     { provide: TokenRepository, useClass: JwtTokenRepository },
   ],
+  exports: [TokenRepository],
 })
 export class AuthModule {}
